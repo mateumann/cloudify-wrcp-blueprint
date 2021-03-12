@@ -1,0 +1,26 @@
+--- /opt/cloudify-stage/dist/appData/templates/pages/catalog.json.orig	2021-03-15 09:56:06.345347176 +0000
++++ /opt/cloudify-stage/dist/appData/templates/pages/catalog.json	2021-03-15 10:19:00.688052036 +0000
+@@ -17,6 +17,23 @@
+       "type": "tabs",
+       "content":[
+         {
++          "name": "WRCP Blueprints",
++          "widgets": [
++            {
++              "name": "Blueprints Catalog",
++              "definition": "blueprintCatalog",
++              "width": 12,
++              "height": 24,
++              "x": 0,
++              "y": 0,
++              "configuration": {
++                "jsonPath": "http://localhost/resources/windriver/wrcp-examples.json",
++                "displayStyle": "catalog"
++              }
++            }
++          ]
++        },
++        {
+           "name": "VM Blueprint Examples",
+           "widgets": [
+             {
