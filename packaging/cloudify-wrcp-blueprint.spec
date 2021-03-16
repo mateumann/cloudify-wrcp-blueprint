@@ -26,8 +26,6 @@ Cloudify WRCP Blueprint Add-on
 
 
 %prep
-#%setup -q
-#rm -rf %{_tmpdir}
 
 %build
 
@@ -45,14 +43,22 @@ install -m 644 %{SOURCE6} %{buildroot}%{_patchesdir}
 %post
 cp -a /etc/nginx/conf.d/fileserver-location.cloudify \
       /etc/nginx/conf.d/fileserver-location.cloudify.orig && \
-patch -p0 < %{_patchesdir}/etc-fileserver-location.cloudify.patch && \
+patch -p0 < %{_patchesdir}/etc-fileserver-location.cloudify.patch
 cp -a /opt/cloudify/cfy_manager/lib/python3.6/site-packages/cfy_manager/components/nginx/config/fileserver-location.cloudify \
       /opt/cloudify/cfy_manager/lib/python3.6/site-packages/cfy_manager/components/nginx/config/fileserver-location.cloudify.orig && \
-patch -p0 < %{_patchesdir}/template-fileserver-location.cloudify.patch && \
+patch -p0 < %{_patchesdir}/template-fileserver-location.cloudify.patch
 cp -a /opt/cloudify-stage/dist/appData/templates/pages/catalog.json \
       /opt/cloudify-stage/dist/appData/templates/pages/catalog.json.orig && \
-patch -p0 < %{_patchesdir}/catalog.json.patch && \
-rm -rf %{_patchesdir}
+patch -p0 < %{_patchesdir}/catalog.json.patch
+supervisorctl restart nginx || systemctl restart nginx
+
+%postun
+mv /etc/nginx/conf.d/fileserver-location.cloudify.orig \
+   /etc/nginx/conf.d/fileserver-location.cloudify
+mv /opt/cloudify/cfy_manager/lib/python3.6/site-packages/cfy_manager/components/nginx/config/fileserver-location.cloudify.orig \
+   /opt/cloudify/cfy_manager/lib/python3.6/site-packages/cfy_manager/components/nginx/config/fileserver-location.cloudify
+mv /opt/cloudify-stage/dist/appData/templates/pages/catalog.json.orig \
+   /opt/cloudify-stage/dist/appData/templates/pages/catalog.json
 supervisorctl restart nginx || systemctl restart nginx
 
 %files
