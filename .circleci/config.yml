@@ -1,0 +1,31 @@
+version: 2.1
+
+jobs:
+  build_rpm:
+    working_directory: /tmp/cloudify-wrcp-blueprint
+    docker:
+      - image: rpmbuild/centos7
+    steps:
+      - checkout
+      - run:
+          name: Link items from workspace under rpm sources dir
+          command: |
+            rm ~/rpm -fr
+            ln -s /tmp/workspace/rpms /tmp/cloudify-wrcp-blueprint/rpms
+            ln -s /tmp/cloudify-wrcp-blueprint ~/rpm
+      - run: sudo yum install rpmdevtools -y
+      - run: rpmbuild -bb packaging/cloudify-wrcp-blueprint.spec
+      - persist_to_workspace:
+          root: ~/rpm
+          paths:
+            - x86_64
+      - store_artifacts:
+          path: ~/rpm/x86_64
+          destination: /
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build_rpm
+
